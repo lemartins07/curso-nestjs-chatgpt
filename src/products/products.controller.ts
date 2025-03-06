@@ -7,11 +7,17 @@ import {
   Post,
   Put,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './create.product.dto';
 import { UpdateProductDto } from './update.products.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Request as Req } from 'express';
+
+interface AuthenticatedRequest extends Req {
+  user: { sub: number };
+}
 
 @Controller('products')
 export class ProductsController {
@@ -28,9 +34,13 @@ export class ProductsController {
     return this.productsService.findOne(Number(id));
   }
 
+  @UseGuards(AuthGuard)
   @Post()
-  createProduct(@Body() productData: CreateProductDto) {
-    return this.productsService.create(productData);
+  createProduct(
+    @Request() req: AuthenticatedRequest,
+    @Body() data: CreateProductDto,
+  ) {
+    return this.productsService.create(req.user.sub, data);
   }
 
   @Put(':id')

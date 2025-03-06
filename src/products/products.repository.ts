@@ -15,8 +15,13 @@ export class ProductsRepository {
     return this.prisma.product.findUnique({ where: { id } });
   }
 
-  async create(data: CreateProductDto) {
-    return this.prisma.product.create({ data });
+  async create(userId: number, data: CreateProductDto) {
+    return this.prisma.product.create({
+      data: {
+        ...data,
+        userId: userId,
+      },
+    });
   }
 
   async update(id: number, data: UpdateProductDto) {

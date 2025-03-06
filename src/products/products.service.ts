@@ -19,8 +19,8 @@ export class ProductsService {
     return product;
   }
 
-  create(data: CreateProductDto) {
-    return this.productsRepository.create(data);
+  async create(userId: number, data: CreateProductDto) {
+    return this.productsRepository.create(userId, data);
   }
 
   async update(id: number, data: UpdateProductDto) {
