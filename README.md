@@ -96,7 +96,62 @@ npx prisma migrate dev --name init
 npm run start
 ```
 
----
+## 📌 **🔹 Como Rodar o Banco de Dados no Docker?**
+
+Caso não tenha o PostgreSQL instalado, você pode rodar o banco de dados usando Docker.
+
+### 🔹 **1️⃣ Iniciar o Banco de Dados**
+Execute o seguinte comando na raiz do projeto:
+```bash
+docker-compose up -d
+```
+
+### 🔹 **2️⃣ Verificar se o Banco Está Rodando
+Para ver os containers ativos, execute:
+
+```bash
+docker ps
+```
+Você verá um container chamado nestjs_db rodando.
+
+### 🔹 **3️⃣ Parar o Banco de Dados
+Se precisar parar o banco, use:
+
+```bash
+docker-compose down
+```
+
+## 📌 **🔹 Configurando o Banco no .env
+Agora, altere o arquivo .env para usar o banco de dados no Docker:
+
+```env
+DATABASE_URL="postgresql://admin:admin@localhost:5432/nestjs_db"
+JWT_SECRET="minha_chave_super_secreta"
+JWT_EXPIRES_IN="1h"
+```
+
+## 📌 **🔹 Rodando Migrations no Prisma
+Agora que o banco está rodando, execute as migrations:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Isso criará as tabelas no banco de dados.
+
+## 📌 **🔹 Acessando o Banco de Dados
+Caso queira acessar o banco via terminal, use:
+
+```bash
+docker exec -it nestjs_db psql -U admin -d nestjs_db
+```
+Isso abrirá o console do PostgreSQL dentro do container.
+
+## 📌 **🔹 Benefícios de Usar Docker para o Banco
+- ✅ Facilidade → Não precisa instalar PostgreSQL localmente.
+- ✅ Portabilidade → Funciona em qualquer máquina com Docker instalado.
+- ✅ Isolamento → Mantém o banco separado do sistema operacional.
+- ✅ Persistência → Os dados não são perdidos ao parar o container.
 
 ## 📌 **🔹 Como Testar a API?**
 
