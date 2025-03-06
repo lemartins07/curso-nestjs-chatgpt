@@ -1,44 +1,41 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
+import { CreateProductDto } from './create.product.dto';
+import { UpdateProductDto } from './update.products.dto';
 
 @Injectable()
 export class ProductsService {
-  // Simula um banco de dados em memória
-  private products = [
-    { id: 1, name: 'Product 1' },
-    { id: 2, name: 'Product 2' },
-  ];
+  constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
-    return this.products;
+    return this.prisma.product.findMany();
   }
 
-  findOne(id: number) {
-    const product = this.findAll().find((p) => p.id === id);
-    if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found.`);
-    }
-    return product;
-  }
-
-  create(product: { id: number; name: string }) {
-    this.products.push(product);
-    return product;
-  }
-
-  update(id: number, updateData: { name: string }) {
-    const product = this.findOne(id);
+  async findOne(id: number) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
     if (!product) {
       throw new NotFoundException(`Produto com ID ${id} não encontrado`);
     }
-    product.name = updateData.name;
     return product;
   }
 
-  delete(id: number) {
-    const index = this.products.findIndex((p) => p.id === id);
-    if (index === -1) {
+  create(data: CreateProductDto) {
+    return this.prisma.product.create({ data });
+  }
+
+  async update(id: number, data: UpdateProductDto) {
+    const product = await this.prisma.product.update({ where: { id }, data });
+    if (!product) {
       throw new NotFoundException(`Produto com ID ${id} não encontrado`);
     }
-    return this.products.splice(index, 1);
+    return product;
+  }
+
+  async delete(id: number) {
+    try {
+      return await this.prisma.product.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
   }
 }
